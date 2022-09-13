@@ -32,5 +32,3 @@ def _get_bibtex():
 __citation__ = __bibtex__ = _get_bibtex()
 
 del _get_bibtex  # noqa
-
-Version='lewton'
