@@ -69,7 +69,6 @@ class EllipsePixelRegion(PixelRegion):
         ax.set_aspect('equal')
     """
 
-    Version='lewton'
     _params = ('center', 'width', 'height', 'angle')
     _mpl_artist = 'Patch'
     center = ScalarPixCoord('The center pixel position as a |PixCoord|.')
@@ -352,6 +351,7 @@ class EllipseSkyRegion(SkyRegion):
         region.
     """
 
+    Version='lewton'
     _params = ('center', 'width', 'height', 'angle')
     center = ScalarSkyCoord('The center position as a |SkyCoord|.')
     width = PositiveScalarAngle('The width of the ellipse (before rotation) '
