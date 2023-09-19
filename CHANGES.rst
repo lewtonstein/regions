@@ -1,8 +1,27 @@
-0.7 (unreleased)
+0.8 (unreleased)
 ================
 
 General
 -------
+
+- The minimum required Python is now 3.9. [#517]
+
+- The minimum required NumPy is now 1.22. [#517]
+
+- The minimum required Matplotlib is now 3.5. [#517]
+
+New Features
+------------
+
+Bug Fixes
+---------
+
+API Changes
+-----------
+
+
+0.7 (2022-10-27)
+================
 
 New Features
 ------------
@@ -19,6 +38,11 @@ Bug Fixes
 
 - Added validation to ``RegionMeta`` and ``RegionVisual`` ``update`` and
   ``setdefault`` methods. [#463]
+
+- Fixed an issue reading CRTF file with labelcolor defined. [#473]
+
+- Fixed a bug parsing CRTF files with ":" and "." coordinate separators.
+  [#407]
 
 API Changes
 -----------

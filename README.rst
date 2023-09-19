@@ -4,14 +4,14 @@ Regions
 
 |PyPI Version| |Conda Version| |Astropy|
 
-|CI Status| |Codecov Status| |Latest RTD Status| |LGTM Status|
+|CI Status| |Codecov Status| |Latest RTD Status|
 
 Regions is an `Astropy`_ package for region handling.
 
 Please see the `online documentation
 <https://astropy-regions.readthedocs.io>`_ for `installation
 instructions
-<https://astropy-regions.readthedocs.io/en/stable/installation.html>`_
+<https://astropy-regions.readthedocs.io/en/stable/install.html>`_
 and usage information.
 
 
@@ -38,7 +38,7 @@ file for details and an example BibTeX entry.
 License
 -------
 
-Regions is licensed under a 3-clause BSD license.  Please see the
+Regions is licensed under a BSD 3-clause license.  Please see the
 `LICENSE
 <https://github.com/astropy/regions/blob/main/LICENSE.rst>`_ file
 for details.
@@ -74,9 +74,5 @@ for details.
 .. |Latest RTD Status| image:: https://img.shields.io/readthedocs/astropy-regions/latest.svg?logo=read%20the%20docs&logoColor=white&label=Docs&version=latest
     :target: https://astropy-regions.readthedocs.io/en/latest/
     :alt: Latest Documentation Status
-
-.. |LGTM Status| image:: https://img.shields.io/lgtm/grade/python/g/astropy/regions.svg?logo=lgtm&logoWidth=18
-    :target: https://lgtm.com/projects/g/astropy/regions/context:python
-    :alt: LGTM Status
 
 .. _Astropy: https://www.astropy.org/

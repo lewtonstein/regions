@@ -3,25 +3,24 @@
 import numbers
 from warnings import warn
 
+import astropy.units as u
 from astropy.coordinates import (Angle, SkyCoord, UnitSphericalRepresentation,
                                  frame_transform_graph)
-import astropy.units as u
 from astropy.utils.exceptions import AstropyUserWarning
 
-from ...shapes import (CirclePixelRegion, CircleSkyRegion,
-                       EllipsePixelRegion, EllipseSkyRegion,
-                       RectanglePixelRegion, RectangleSkyRegion,
-                       PolygonPixelRegion, RegularPolygonPixelRegion,
-                       PolygonSkyRegion,
-                       CircleAnnulusPixelRegion, CircleAnnulusSkyRegion,
-                       EllipseAnnulusPixelRegion, EllipseAnnulusSkyRegion,
-                       RectangleAnnulusPixelRegion, RectangleAnnulusSkyRegion,
-                       LinePixelRegion, LineSkyRegion,
-                       PointPixelRegion, PointSkyRegion,
-                       TextPixelRegion, TextSkyRegion)
-from ...core.core import PixCoord, SkyRegion
-from ...core.metadata import RegionMeta, RegionVisual
-from ..crtf.core import CRTFRegionParserWarning
+from regions.core.core import PixCoord, SkyRegion
+from regions.core.metadata import RegionMeta, RegionVisual
+from regions.io.crtf.core import CRTFRegionParserWarning
+from regions.shapes import (CircleAnnulusPixelRegion, CircleAnnulusSkyRegion,
+                            CirclePixelRegion, CircleSkyRegion,
+                            EllipseAnnulusPixelRegion, EllipseAnnulusSkyRegion,
+                            EllipsePixelRegion, EllipseSkyRegion,
+                            LinePixelRegion, LineSkyRegion, PointPixelRegion,
+                            PointSkyRegion, PolygonPixelRegion,
+                            PolygonSkyRegion, RectangleAnnulusPixelRegion,
+                            RectangleAnnulusSkyRegion, RectanglePixelRegion,
+                            RectangleSkyRegion, RegularPolygonPixelRegion,
+                            TextPixelRegion, TextSkyRegion)
 
 __all__ = []
 
@@ -438,9 +437,9 @@ class _Shape:
         viz_keywords = ['color', 'dash', 'dashlist', 'width', 'font',
                         'symsize', 'symbol', 'symsize', 'fontsize',
                         'fontstyle', 'usetex', 'labelpos', 'labeloff',
-                        'linewidth', 'linestyle', 'point', 'textangle',
-                        'fontweight', 'symthick', 'default_style', 'fill',
-                        'textrotate']
+                        'labelcolor', 'linewidth', 'linestyle', 'point',
+                        'textangle', 'fontweight', 'symthick', 'default_style',
+                        'fill', 'textrotate', 'fontstyle']
 
         if isinstance(coords[0], SkyCoord):
             reg = self.shape_to_sky_region[self.region_type](*coords)

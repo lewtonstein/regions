@@ -3,17 +3,17 @@
 Tests for the crtf subpackage.
 """
 
-from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
-from astropy.utils.data import get_pkg_data_filename
 import pytest
+from astropy.coordinates import Angle, SkyCoord
+from astropy.tests.helper import assert_quantity_allclose
+from astropy.utils.data import get_pkg_data_filename
 
-from ....shapes.circle import CircleSkyRegion
-from ....shapes.ellipse import EllipseSkyRegion
-from ....core import Regions
-from ..core import CRTFRegionParserError
-from ..read import _CRTFParser
-
+from regions.core import Regions
+from regions.io.crtf.core import CRTFRegionParserError
+from regions.io.crtf.read import _CRTFParser
+from regions.shapes.circle import CircleSkyRegion
+from regions.shapes.ellipse import EllipseSkyRegion
 
 implemented_region_types = ('ellipse', 'circle', 'rectangle', 'poly', 'point',
                             'text', 'symbol')
@@ -128,16 +128,28 @@ def test_issue_312_regression():
     assert crtfstr.strip()[-1] != ','
 
 
-@pytest.mark.parametrize('filename', ['data/CRTFgeneral.crtf',
-                                      'data/CRTFgeneraloutput.crtf'])
-def test_file_crtf(filename):
+@pytest.mark.parametrize(('filename', 'outname', 'coordsys', 'fmt'),
+                         [('data/CRTFgeneral.crtf',
+                           'data/CRTFgeneraloutput.crtf',
+                           'fk4', '.3f'),
+                          ('data/CRTFgeneraloutput.crtf',
+                           'data/CRTFgeneraloutput.crtf',
+                           'fk4', '.3f'),
+                          ('data/CRTF_labelcolor.crtf',
+                           'data/CRTF_labelcolor_output.crtf',
+                           'fk5', '.6f')])
+def test_file_crtf(filename, outname, coordsys, fmt):
+    """
+    The "labelcolor" example is a regression test for Issue 405
+    The others are just a general serialization self-consistency check.
+    """
     filename = get_pkg_data_filename(filename)
     regs = Regions.read(filename, errors='warn', format='crtf')
-    actual_output = regs.serialize(format='crtf', coordsys='fk4',
-                                   fmt='.3f').strip()
+    actual_output = regs.serialize(format='crtf', coordsys=coordsys,
+                                   fmt=fmt).strip()
 
-    with open(get_pkg_data_filename('data/CRTFgeneraloutput.crtf')) as f:
-        ref_output = f.read().strip()
+    with open(get_pkg_data_filename(outname)) as fh:
+        ref_output = fh.read().strip()
 
     # since metadata is not required to preserve order, we have to do a more
     # complex comparison
@@ -204,3 +216,11 @@ def test_angle_serialization():
     expected = ('#CRTFv0\nglobal coord=J2000\ncircle[[10.000009deg, '
                 '20.000002deg], 0.000278deg]\n')
     assert regstr == expected
+
+
+def test_read_sexagesimal_regression407():
+    filename = 'data/crtf_carta_sexagesimal.crtf'
+    filename = get_pkg_data_filename(filename)
+    regs = Regions.read(filename, errors='warn', format='crtf')
+
+    assert_quantity_allclose(regs[0].center.ra, 281.93342096 * u.deg, rtol=1e-9)

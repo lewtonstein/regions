@@ -4,19 +4,19 @@ This module defines polygon regions in both pixel and sky coordinates.
 """
 
 import astropy.units as u
-from astropy.wcs.utils import pixel_to_skycoord, skycoord_to_pixel
 import numpy as np
 
-from ..core.attributes import (OneDPixCoord, ScalarPixCoord, PositiveScalar,
-                               ScalarAngle, OneDSkyCoord, RegionMetaDescr,
-                               RegionVisualDescr)
-from ..core.bounding_box import RegionBoundingBox
-from ..core.core import PixelRegion, SkyRegion
-from ..core.mask import RegionMask
-from ..core.metadata import RegionMeta, RegionVisual
-from ..core.pixcoord import PixCoord
-from .._geometry import polygonal_overlap_grid
-from .._geometry.pnpoly import points_in_polygon
+from regions._geometry import polygonal_overlap_grid
+from regions._geometry.pnpoly import points_in_polygon
+from regions.core.attributes import (OneDPixCoord, OneDSkyCoord,
+                                     PositiveScalar, RegionMetaDescr,
+                                     RegionVisualDescr, ScalarAngle,
+                                     ScalarPixCoord)
+from regions.core.bounding_box import RegionBoundingBox
+from regions.core.core import PixelRegion, SkyRegion
+from regions.core.mask import RegionMask
+from regions.core.metadata import RegionMeta, RegionVisual
+from regions.core.pixcoord import PixCoord
 
 __all__ = ['PolygonPixelRegion', 'RegularPolygonPixelRegion',
            'PolygonSkyRegion']
@@ -107,7 +107,7 @@ class PolygonPixelRegion(PixelRegion):
             return np.logical_not(in_poly)
 
     def to_sky(self, wcs):
-        vertices_sky = pixel_to_skycoord(self.vertices.x, self.vertices.y, wcs)
+        vertices_sky = wcs.pixel_to_world(self.vertices.x, self.vertices.y)
         return PolygonSkyRegion(vertices=vertices_sky, meta=self.meta.copy(),
                                 visual=self.visual.copy())
 
@@ -381,7 +381,7 @@ class PolygonSkyRegion(SkyRegion):
         self.visual = visual or RegionVisual()
 
     def to_pixel(self, wcs):
-        x, y = skycoord_to_pixel(self.vertices, wcs)
+        x, y = wcs.world_to_pixel(self.vertices)
         vertices_pix = PixCoord(x, y)
         return PolygonPixelRegion(vertices_pix, meta=self.meta.copy(),
                                   visual=self.visual.copy())

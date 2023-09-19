@@ -12,42 +12,47 @@
 # the global Astropy configuration which is loaded here before anything
 # else. See astropy.sphinx.conf for which values are set there.
 
-from configparser import ConfigParser
-from datetime import datetime
 import os
 import sys
+from datetime import datetime
+from pathlib import Path
+
+if sys.version_info < (3, 11):
+    import tomli as tomllib
+else:
+    import tomllib
 
 try:
-    from sphinx_astropy.conf.v1 import *  # noqa
+    from sphinx_astropy.conf.v1 import *  # noqa: F403
+    from sphinx_astropy.conf.v1 import rst_epilog
 except ImportError:
     print('ERROR: the documentation requires the sphinx-astropy package to '
           'be installed')
     sys.exit(1)
 
-# Get configuration information from setup.cfg
-conf = ConfigParser()
-conf.read([os.path.join(os.path.dirname(__file__), '..', 'setup.cfg')])
-setup_cfg = dict(conf.items('metadata'))
-
+# Get configuration information from pyproject.toml
+with (Path(__file__).parents[1] / 'pyproject.toml').open('rb') as fh:
+    conf = tomllib.load(fh)
+    project_meta = conf['project']
 
 # -- General configuration ----------------------------------------------------
 # By default, highlight as Python 3.
 highlight_language = 'python3'
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.7'
+needs_sphinx = '3.0'
 
 # Extend astropy intersphinx_mapping with packages we use here
-intersphinx_mapping['photutils'] = ('https://photutils.readthedocs.io/en/stable/', None)  # noqa
-#intersphinx_mapping['shapely'] = ('https://shapely.readthedocs.io/en/stable/', None)  # noqa
+intersphinx_mapping['photutils'] = ('https://photutils.readthedocs.io/en/stable/', None)  # noqa: F405
+# intersphinx_mapping['shapely'] = ('https://shapely.readthedocs.io/en/stable/', None)
 
 # Exclude astropy intersphinx_mapping for unused packages
-del intersphinx_mapping['scipy']  # noqa
-del intersphinx_mapping['h5py']  # noqa
+del intersphinx_mapping['scipy']  # noqa: F405
+del intersphinx_mapping['h5py']  # noqa: F405
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns.append('_templates')  # noqa
+exclude_patterns.append('_templates')  # noqa: F405
 
 plot_formats = ['png', 'hires.png', 'pdf', 'svg']
 
@@ -56,10 +61,9 @@ plot_formats = ['png', 'hires.png', 'pdf', 'svg']
 with open('common_links.txt') as fh:
     rst_epilog += fh.read()
 
-
 # -- Project information ------------------------------------------------------
-project = setup_cfg['name']
-author = setup_cfg['author']
+project = project_meta['name']
+author = project_meta['authors'][0]['name']
 copyright = f'2015-{datetime.utcnow().year}, {author}'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -72,7 +76,6 @@ package = sys.modules[project]
 version = package.__version__.split('-', 1)[0]
 # The full version, including alpha/beta/rc tags.
 release = package.__version__
-
 
 # -- Options for HTML output --------------------------------------------------
 # The global astropy configuration uses a custom theme,
@@ -126,7 +129,6 @@ htmlhelp_basename = project + 'doc'
 # html_static_path = ['_static']
 # html_style = 'regions.css'
 
-
 # -- Options for LaTeX output -------------------------------------------------
 # Grouping the document tree into LaTeX files. List of tuples (source
 # start file, target name, title, author, documentclass [howto/manual]).
@@ -134,18 +136,15 @@ latex_documents = [('index', project + '.tex', project + ' Documentation',
                     author, 'manual')]
 # latex_logo = '_static/regions_banner.pdf'
 
-
 # -- Options for manual page output -------------------------------------------
 # One entry per manual page. List of tuples (source start file, name,
 # description, authors, manual section).
 man_pages = [('index', project.lower(), project + ' Documentation',
               [author], 1)]
 
-
 # -- Resolving issue number to links in changelog -----------------------------
-github_project = setup_cfg['github_project']
+github_project = conf['tool']['build-sphinx']['github_project']
 github_issues_url = f'https://github.com/{github_project}/issues/'
-
 
 # -- Turn on nitpicky mode for sphinx (to warn about references not found) ----
 nitpicky = True
@@ -173,14 +172,12 @@ if os.path.isfile(nitpick_filename):
         target = target.strip()
         nitpick_ignore.append((dtype, target))
 
-
 # -- Options for linkcheck output ---------------------------------------------
 linkcheck_retry = 5
 linkcheck_ignore = ['http://data.astropy.org',
                     r'https://github\.com/astropy/regions/(?:issues|pull)/\d+']
 linkcheck_timeout = 180
 linkcheck_anchors = False
-
 
 # -- Matplotlib plot defaults -------------------------------------------------
 plot_rcparams = {'savefig.bbox': 'tight',

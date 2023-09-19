@@ -5,21 +5,20 @@ This module defines circular regions in both pixel and sky coordinates.
 
 import math
 
-from astropy.coordinates import Angle
 import astropy.units as u
-from astropy.wcs.utils import pixel_to_skycoord
 import numpy as np
+from astropy.coordinates import Angle
 
-from ..core.attributes import (ScalarPixCoord, PositiveScalar,
-                               PositiveScalarAngle, ScalarSkyCoord,
-                               RegionMetaDescr, RegionVisualDescr)
-from ..core.bounding_box import RegionBoundingBox
-from ..core.core import PixelRegion, SkyRegion
-from ..core.mask import RegionMask
-from ..core.metadata import RegionMeta, RegionVisual
-from ..core.pixcoord import PixCoord
-from .._utils.wcs_helpers import pixel_scale_angle_at_skycoord
-from .._geometry import circular_overlap_grid
+from regions._geometry import circular_overlap_grid
+from regions._utils.wcs_helpers import pixel_scale_angle_at_skycoord
+from regions.core.attributes import (PositiveScalar, PositiveScalarAngle,
+                                     RegionMetaDescr, RegionVisualDescr,
+                                     ScalarPixCoord, ScalarSkyCoord)
+from regions.core.bounding_box import RegionBoundingBox
+from regions.core.core import PixelRegion, SkyRegion
+from regions.core.mask import RegionMask
+from regions.core.metadata import RegionMeta, RegionVisual
+from regions.core.pixcoord import PixCoord
 
 __all__ = ['CirclePixelRegion', 'CircleSkyRegion']
 
@@ -87,7 +86,7 @@ class CirclePixelRegion(PixelRegion):
 
     def to_sky(self, wcs):
         # TODO: write a pixel_to_skycoord_scale_angle
-        center = pixel_to_skycoord(self.center.x, self.center.y, wcs)
+        center = wcs.pixel_to_world(self.center.x, self.center.y)
         _, pixscale, _ = pixel_scale_angle_at_skycoord(center, wcs)
         radius = Angle(self.radius * u.pix * pixscale, 'arcsec')
         return CircleSkyRegion(center, radius, meta=self.meta.copy(),

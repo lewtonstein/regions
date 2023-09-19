@@ -1,21 +1,21 @@
 # Licensed under a 3-clause BSD style license - see LICENSE.rst
 
-from copy import deepcopy
-from dataclasses import dataclass
 import re
 import string
 import warnings
+from dataclasses import dataclass
 
-from astropy.coordinates import Angle, SkyCoord
 import astropy.units as u
+from astropy.coordinates import Angle, SkyCoord
 from astropy.utils.data import get_readable_fileobj
 from astropy.utils.exceptions import AstropyUserWarning
 
-from ...core import Regions, RegionMeta, RegionVisual, PixCoord
-from ...core.registry import RegionsRegistry
-from .core import (ds9_frame_map, ds9_shape_to_region, ds9_params_template,
-                   DS9ParserError)
-from .meta import _split_raw_metadata, _translate_ds9_to_visual
+from regions.core import PixCoord, RegionMeta, Regions, RegionVisual
+from regions.core.registry import RegionsRegistry
+from regions.io.ds9.core import (DS9ParserError, ds9_frame_map,
+                                 ds9_params_template, ds9_shape_to_region,
+                                 make_region_template)
+from regions.io.ds9.meta import _split_raw_metadata, _translate_ds9_to_visual
 
 __all__ = []
 
@@ -81,6 +81,7 @@ class _RegionData:
 
     Data for multi-annulus regions is stored in a single object.
     """
+
     frame: str
     region_type: str
     shape: str
@@ -542,8 +543,8 @@ def _parse_shape_params(region_data):
         n_annulus = nparams - 3
 
     if shape in ('ellipse', 'box', 'annulus'):
-        # deepcopy to "reset" the cycle iterators
-        shape_template = deepcopy(ds9_params_template[shape])
+        # reset the cycle iterators
+        shape_template = make_region_template()
     else:
         shape_template = ds9_params_template[shape]
 
